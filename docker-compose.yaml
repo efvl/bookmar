@@ -1,0 +1,27 @@
+version: '3'
+services:
+  booking-srv:
+    container_name: booking-container
+    build:
+      context: ./booking-service
+      dockerfile: Dockerfile
+    image: booking-image:latest
+    ports:
+      - 8001:8080
+    networks:
+      - docker-network
+  order-srv:
+    container_name: order-container
+    build:
+      context: ./order-service
+      dockerfile: Dockerfile
+    image: order-image:latest
+    ports:
+      - 8002:8080
+    networks:
+      - docker-network
+networks:
+  docker-network:
+    driver: bridge
+
+
