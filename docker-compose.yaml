@@ -1,25 +1,44 @@
 version: '3'
 services:
+  discovery-srv:
+    container_name: discovery-srv
+    build:
+      context: ./discovery-server
+      dockerfile: Dockerfile
+    image: eureka-image:latest
+    ports:
+      - 8761:8761
+    networks:
+      - docker-network
+
   booking-srv:
-    container_name: booking-container
     build:
       context: ./booking-service
       dockerfile: Dockerfile
     image: booking-image:latest
     ports:
-      - 8001:8080
+      - 8081:8081
     networks:
       - docker-network
+    links:
+      - discovery-srv
+    environment:
+      eureka.client.serviceUrl.defaultZone: http://discovery-srv:8761/eureka
+
   order-srv:
-    container_name: order-container
     build:
       context: ./order-service
       dockerfile: Dockerfile
     image: order-image:latest
     ports:
-      - 8002:8080
+      - 8082:8082
     networks:
       - docker-network
+    links:
+      - discovery-srv
+    environment:
+      eureka.client.serviceUrl.defaultZone: http://discovery-srv:8761/eureka
+
 networks:
   docker-network:
     driver: bridge
